@@ -1,0 +1,38 @@
+Добавление нового типа заказа с предоплатой потребует:
+1. Создание нового класса PrepaidOrderProcessing, наследующего OrderProcessing
+2. Переопределение соответствующих шагов в новом классе, в основном методов ProcessPayment() и ValidateOrder()
+3. Возможно, переопределение других методов, если нужна специфичная логика (например, ApplyDiscounts() для дополнительных бонусов за предоплату)
+
+Изменения в коде:
+1. Добавляется новый класс без изменения существующей иерархии
+2. Можно добавить дополнительные поля в класс Order при необходимости (например, флаг предоплаты)
+3. Код соответствует принципу открытости/закрытости
+
+Реализация в методе ProcessOrder():
+public class PrepaidOrderProcessing : OrderProcessing
+{
+    protected override void ProcessPayment(Order order)
+    {
+        order.PaymentMethod = "Предоплата 100%";
+        Console.WriteLine($"4. Принята предоплата {order.TotalAmount:C}");
+        Console.WriteLine("   Заказ будет отправлен после подтверждения оплаты");
+    }
+    
+    protected override void ValidateOrder(Order order)
+    {
+        base.ValidateOrder(order);
+        Console.WriteLine("   Дополнительная проверка наличия предоплаты");
+    }
+    
+    protected override void ApplyDiscounts(Order order)
+    {
+        order.TotalAmount *= 0.97m; // 3% скидка за предоплату
+        Console.WriteLine("3. Применена скидка 3% за предоплату");
+    }
+    
+    protected override void ArrangeDelivery(Order order)
+    {
+        order.DeliveryMethod = "Приоритетная доставка после предоплаты";
+        Console.WriteLine("5. Оформлена приоритетная доставка (2-4 дня)");
+    }
+}
