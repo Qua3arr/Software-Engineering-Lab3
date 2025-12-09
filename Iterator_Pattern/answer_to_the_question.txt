@@ -1,0 +1,31 @@
+Для обработки ситуации отсутствия товаров внесу следующие изменения:
+
+1. В методах Next() буду возвращать null и добавлю валидацию перед доступом к данным:
+public Product Next()
+{
+    if (!HasNext()) 
+    {
+        return null; // или выбросить исключение InvalidOperationException
+    }
+    //остальная логика
+}
+
+2. Добавлю методы-проверки в класс Catalog:
+public bool HasProducts() => _products.Any();
+public bool HasProductsInCategory(string category) => _products.Any(p => p.Category == category);
+
+3. В итераторах добавлю обработку пустых коллекций в конструкторах:
+public CategoryIterator(List<Product> products)
+{
+    _products = products ?? new List<Product>();
+    //остальная логика
+}
+
+4. В UI/логике представления добавлю проверки:
+if (!catalog.HasProducts())
+{
+    Console.WriteLine("Каталог пуст");
+    return;
+}
+
+5. Для CategoryIterator усовершенствую логику - если в текущей категории нет товаров, автоматически перейду к следующей категории.
